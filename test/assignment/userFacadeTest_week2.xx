@@ -1,0 +1,35 @@
+
+const {expect} = require ('chai')
+import userFacade from '../src/facades/myFacade';
+//Se week7
+
+it('should add a user', async function(){
+    const addUser = await userFacade.addUser({
+        name: 'Frederikke',
+        userName: 'fred8728',
+        password: '12345',
+        role: 'user'
+    })
+})
+
+it('should check that there is 4 users', async function(){
+    const getAllUsers = await userFacade.getAllUsers();
+    expect(getAllUsers.length).to.be.equal(4);
+})
+
+it('should check that a user is deleted', async function(){
+    const deleteUser = await userFacade.deleteUser('pp@b.dk')
+    const users = await userFacade.getAllUsers()
+    expect(users.length).to.be.equal(3)    
+})
+
+it('should get a user by userName', async function(){
+    const user = await userFacade.getUser('fred8728')
+    expect(user.name).to.be.equal('Frederikke')
+    expect(user.role).to.be.equal('user')
+})
+
+it('should return true - when checking credentials - username/pw', async function(){
+        const user1 = await userFacade.checkUser('fred8728', '12345')
+        expect(user1).to.be.equal(true)
+})

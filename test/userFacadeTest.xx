@@ -1,0 +1,62 @@
+
+
+import UserFacade from '../src/facades/user';
+import { expect } from "chai";
+import { ApiError } from '../src/errors/apiError';
+
+describe("Verify the UserFacade", () => {
+  
+    beforeEach(() => {
+        UserFacade.users = [
+                    { name: "Peter Pan", userName: "pp@b.dk", password: "secret", role: "user" },
+                    { name: "Donald Duck", userName: "dd@b.dk", password: "secret", role: "user" },
+                    { name: "admin", userName: "admin@a.dk", password: "secret", role: "admin" }
+                 ]
+     
+    })
+  
+  
+    it("Should Add the user Kurt", async () => {
+        const newUser = { name: "Jan Olsen", userName: "jo@b.dk", password: "secret", role: "user" }
+        try{
+          const status = await UserFacade.addUser(newUser);
+          expect(status).to.be.equal("User was added")
+          expect(UserFacade.users.length).to.equal(4)
+        } catch(err){
+        }finally{}
+    })   
+    it("Should remove the user Peter", async () => {
+        try{
+          const status = await UserFacade.deleteUser("pp@b.dk");
+          expect(status).to.be.equal("User was added")
+          expect(UserFacade.users.length).to.equal(2)
+        } catch(err){
+        }finally{}
+    })   
+    it("Should get three users", async () => {
+        try{
+          const all = await UserFacade.getAllUsers();
+          expect(all.length).to.be.equal(3)
+        } catch(err){}
+        finally{}
+    })   
+
+    it("Should find Donald Duck", async () => {
+        try{
+          const donald = await UserFacade.getUser("dd@b.dk");
+          expect(donald.name).to.be.equal("Donald Duck")
+        } catch(err){}
+        finally{}
+    })   
+    it("Should not find xxx.@.b.dk", async () => {
+        try{
+          const donald = await UserFacade.getUser("xxx.@.b.dk");
+          throw new Error("Should not get here")
+        } catch(err){
+            expect(err instanceof ApiError).to.be.equal(true)
+          expect(err.message).to.be.equal("User Not Found")
+        }
+        finally{}
+    })   
+    
+  })
